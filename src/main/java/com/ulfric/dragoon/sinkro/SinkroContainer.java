@@ -5,7 +5,6 @@ import java.lang.reflect.Type;
 
 import com.ulfric.acrodb.Bucket;
 import com.ulfric.dragoon.ObjectFactory;
-import com.ulfric.dragoon.acrodb.Store;
 import com.ulfric.dragoon.application.Container;
 import com.ulfric.dragoon.extension.inject.Inject;
 import com.ulfric.dragoon.reflect.Classes;
@@ -42,8 +41,7 @@ public class SinkroContainer extends Container {
 	}
 
 	private void unbindSinkro() {
-		factory.bind(Bucket.class).toNothing();
-		factory.bind(Store.class).toNothing();
+		factory.bind(Sink.class).toNothing();
 	}
 
 }
