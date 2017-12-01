@@ -5,6 +5,7 @@ import java.lang.reflect.Type;
 
 import com.ulfric.acrodb.Bucket;
 import com.ulfric.dragoon.ObjectFactory;
+import com.ulfric.dragoon.Parameters;
 import com.ulfric.dragoon.application.Container;
 import com.ulfric.dragoon.extension.inject.Inject;
 import com.ulfric.dragoon.reflect.Classes;
@@ -22,13 +23,24 @@ public class SinkroContainer extends Container {
 
 	private void bindSinkro() {
 		factory.bind(Sink.class).toFunction(parameters -> {
-			Bucket bucket = factory.request(Bucket.class, parameters);
+			Bucket bucket = getBucket(parameters);
 
-			return new Sink<>(bucket, getSinkType(parameters.getQualifier().getType()));
+			return new Sink<>(bucket, getSinkType(parameters));
+		});
+
+		factory.bind(Sinks.class).toFunction(parameters -> {
+			Bucket bucket = getBucket(parameters);
+
+			return new Sinks<>(bucket, getSinkType(parameters));
 		});
 	}
 
-	private Class<?> getSinkType(Type type) {
+	private Bucket getBucket(Parameters parameters) {
+		return factory.request(Bucket.class, parameters);
+	}
+
+	private Class<?> getSinkType(Parameters parameters) {
+		Type type = parameters.getQualifier().getType();
 		if (type instanceof ParameterizedType) {
 			ParameterizedType parameterizedType = (ParameterizedType) type;
 			Type[] arguments = parameterizedType.getActualTypeArguments();
@@ -42,6 +54,7 @@ public class SinkroContainer extends Container {
 
 	private void unbindSinkro() {
 		factory.bind(Sink.class).toNothing();
+		factory.bind(Sinks.class).toNothing();
 	}
 
 }
